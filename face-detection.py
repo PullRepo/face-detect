@@ -1,8 +1,5 @@
 
 import cv2
-import numpy as np
-
-px, py, pw, ph = (0, 0, 0, 0)
 
 def detect(cascade, frame):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -14,28 +11,11 @@ def detect(cascade, frame):
         # Non-maximal Suppression to remove duplicates
         # TODO: This isn't working as well as I'd like...
         indices = cv2.dnn.NMSBoxes(faces, scores, score_threshold=0.8, nms_threshold=0.2)
-
-        global px
-        global py
-        global pw
-        global ph
-        px, py, pw, ph = faces[0]
+        
         for i in indices:
             x, y, w, h = faces[i]
 
-            alpha = 0.6
-            beta = 1.0 - alpha
-
-            # Smooth the rectangle over time
-            # TODO: This also isn't working as well as I'd like...
-            X = round(alpha * x + beta * px)
-            Y = round(alpha * y + beta * py)
-            W = round(alpha * w + beta * pw)
-            H = round(alpha * h + beta * ph)
-
-            cv2.rectangle(frame, (X, Y), (X+W, Y+H), (255, 0, 0), 2)
-
-            px, py, pw, ph = (x, y, w, h)
+            cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
 
     return frame
 
@@ -46,7 +26,6 @@ if __name__ == "__main__":
 
     # Starting window
     start_img = cv2.imread("images/PR_camera_search.png")
-    (h, w, c) = start_img.shape[:3]
     cv2.imshow("Face Detection", start_img)
     cv2.waitKey(1000)
 
