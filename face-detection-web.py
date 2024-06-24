@@ -1,5 +1,6 @@
 
 import cv2
+from flask import Flask, render_template, Response
 
 def detect(cascade, frame):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -11,7 +12,7 @@ def detect(cascade, frame):
         # Non-maximal Suppression to remove duplicates
         # TODO: This isn't working as well as I'd like...
         indices = cv2.dnn.NMSBoxes(faces, scores, score_threshold=0.8, nms_threshold=0.2)
-        
+
         for i in indices:
             x, y, w, h = faces[i]
 
@@ -19,22 +20,18 @@ def detect(cascade, frame):
 
     return frame
 
-def display(frame):
-    cv2.imshow("Face Detection", frame)
+app = Flask(__name__)
 
-if __name__ == "__main__":
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-    # Starting window
-    start_img = cv2.imread("images/PR_camera_search.png")
-    cv2.imshow("Face Detection", start_img)
-    cv2.waitKey(1000)
-
+def gen():
     # Load cascade
     face_cascade = cv2.CascadeClassifier('data/haarcascade_frontalface_default.xml')
 
+    # Find camera and start capture
     success = False
-
-    # Start Video Capture
     for i in range(5):
         cap = cv2.VideoCapture(i)
         if not cap.isOpened():
@@ -45,22 +42,20 @@ if __name__ == "__main__":
             break
         else:
             cap.release()
-
-    if not success:
-        err_img = cv2.imread("images/PR_camera_unk.png")
-        cv2.imshow("Face Detection", err_img)
-        cv2.waitKey(3000)
-        cv2.destroyAllWindows()
-        exit(-1)
-
+    
     while success:
         success, frame = cap.read()
         if success:
             detect(face_cascade, frame)
-            display(frame)
-
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + cv2.imencode('.jpg', frame)[1].tobytes() + b'\r\n')
     
     cap.release()
-    cv2.destroyAllWindows()
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(gen(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+if __name__ == "__main__":
+    app.run(debug=True, host='0.0.0.0')

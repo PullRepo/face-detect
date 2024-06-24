@@ -1,5 +1,5 @@
 # Face Detection
-This Python script performs simple face detection using the default Haar Cascade data provided by OpenCV.
+These Python scripts perform simple face detection using the default Haar Cascade data provided by OpenCV.
 
 ## Example
 Sample output shown below.
@@ -16,9 +16,15 @@ An environment file has been provided to generate and use an Anaconda environmen
 ## Running
 With the conda environment activated, run the following command:
 
+- For a local desktop "application"
+
 `$ python face-detection.py`
 
-To exit the program, select the active UI window and type the *'q'* key or *'Ctrl-c'* in the terminal.
+*Note: To exit the program, select the active UI window and type the *'q'* key or *'Ctrl-c'* in the terminal.*
+
+- For a local web server (served at http://localhost:8080)
+
+`$ python face-detection-web.py`
 
 ## License
 Please see [License](LICENSE) file for usage information.
