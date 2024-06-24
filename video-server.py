@@ -12,7 +12,7 @@ def detect(cascade, frame):
         # Non-maximal Suppression to remove duplicates
         # TODO: This isn't working as well as I'd like...
         indices = cv2.dnn.NMSBoxes(faces, scores, score_threshold=0.8, nms_threshold=0.2)
-        
+
         for i in indices:
             x, y, w, h = faces[i]
 
@@ -27,11 +27,6 @@ def index():
     return render_template('index.html')
 
 def gen():
-    #Starting window
-    start_img = cv2.imread("images/PR_camera_search.png")
-    yield (b'--frame\r\n'
-           b'Content-Type: image/jpeg\r\n\r\n' + cv2.imencode('.jpg', start_img)[1].tobytes() + b'\r\n')
-
     # Load cascade
     face_cascade = cv2.CascadeClassifier('data/haarcascade_frontalface_default.xml')
 
@@ -47,12 +42,6 @@ def gen():
             break
         else:
             cap.release()
-    
-    if not success:
-        err_img = cv2.imread("images/PR_camera_unk.png")
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + cv2.imencode('.jpg', err_img)[1].tobytes() + b'\r\n')
-        exit(-1)
     
     while success:
         success, frame = cap.read()
