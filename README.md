@@ -16,15 +16,18 @@ An environment file has been provided to generate and use an Anaconda environmen
 ## Running
 With the conda environment activated, run the following command:
 
-- For a local desktop "application"
+### For a local desktop "application"
 
-`$ python face-detection.py`
+- `$ python face_detection.py`
 
 *Note: To exit the program, select the active UI window and type the *'q'* key or *'Ctrl-c'* in the terminal.*
 
-- For a local web server (served at http://localhost:8080)
+### For a local web server (served at http://localhost:8080)
 
-`$ python face-detection-web.py`
+Either of the following commands:
+
+- `$ python face_detection_web.py`
+- `$ flask --app face_detection_web run`
 
 ## License
 Please see [License](LICENSE) file for usage information.
